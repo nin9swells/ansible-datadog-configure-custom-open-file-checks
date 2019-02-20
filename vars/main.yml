@@ -1,0 +1,4 @@
+---
+custom_check_state_values:
+  - present
+  - absent

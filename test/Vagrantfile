@@ -1,0 +1,47 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Override host locale in SSH session
+ENV["LC_ALL"] = "en_US.UTF-8"
+
+Vagrant.configure(2) do |config|
+
+  # vagrant-cachier configuration
+  # to install run: 'vagrant plugin install vagrant-cachier'
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :machine
+    config.cache.auto_detect = true
+  end
+
+  # enable host only network (needed for NFS shares)
+  # config.vm.network "private_network", type: "dhcp"
+
+  machines = []
+  machines << { name: "trusty", box: "ubuntu/trusty64" }
+
+  machines.each do |machine|
+    config.vm.define machine[:name] do |conf|
+      conf.vm.box_check_update = false
+
+      conf.vm.box = machine[:box]
+      conf.vm.hostname = machine[:name]
+
+      conf.vm.provider "virtualbox" do |v|
+        v.gui = false
+        v.memory = 512
+        v.cpus = 1
+
+        v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+      end
+
+      if machine == machines.last
+        conf.vm.provision :ansible do |ansible|
+          ansible.playbook = ENV['TASK']
+          ansible.limit = "all"
+          ansible.verbose = "v"
+        end
+      end
+    end
+  end
+end

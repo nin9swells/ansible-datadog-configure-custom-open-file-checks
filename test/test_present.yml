@@ -1,0 +1,14 @@
+---
+- hosts: all
+  vars:
+    custom_check_state: present
+    check_config:
+      init_config:
+        min_collection_interval: 20
+      instances:
+        - process_name_pattern: jetty
+          alias: java_process
+        - process_name_pattern: mongod
+
+  roles:
+    - role: ../../ansible-datadog-configure-custom-open-file-checks

@@ -1,0 +1,11 @@
+---
+
+- name: validate custom_check_state
+  assert:
+    that:
+      - "custom_check_state in custom_check_state_values"
+
+- name: "ensure datadog custom check is {{ custom_check_state }}"
+  include: "{{ custom_check_state }}.yml"
+  static: false
+

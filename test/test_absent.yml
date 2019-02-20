@@ -1,0 +1,8 @@
+---
+- hosts: all
+  vars:
+    custom_check_state: absent
+
+  roles:
+    - role: ../../ansible-datadog-configure-custom-open-file-checks
+

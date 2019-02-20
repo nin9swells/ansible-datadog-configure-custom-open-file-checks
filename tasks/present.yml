@@ -1,0 +1,31 @@
+---
+- name: ensure /etc/dd-agent/conf.d exists
+  file:
+    path: "/etc/dd-agent/conf.d"
+    state: directory
+  become: true
+
+- name: ensure /etc/dd-agent/checks.d exists
+  file:
+    path: "/etc/dd-agent/checks.d"
+    state: directory
+  become: true
+
+- name: create a configuration file for custom-open-file
+  template:
+    src: checks.yaml.j2
+    dest: "/etc/dd-agent/conf.d/custom-open-file.yaml"
+    owner: "root"
+    group: "root"
+  become: true
+  notify: restart datadog-agent
+
+- name: create the Python script file for custom-open-file
+  copy:
+    src: "custom-open-file.py"
+    dest: "/etc/dd-agent/checks.d/custom-open-file.py"
+    owner: "root"
+    group: "root"
+  become: true
+  notify: restart datadog-agent
+

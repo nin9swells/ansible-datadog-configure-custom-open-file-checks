@@ -1,0 +1,14 @@
+---
+- name: remove configuration file for custom-open-file
+  file:
+    path: "/etc/dd-agent/conf.d/custom-open-file.yaml"
+    state: "absent"
+  become: true
+
+- name: remove the Python script file for custom-open-file
+  file:
+    path: "/etc/dd-agent/checks.d/custom-open-file.py"
+    state: "absent"
+  become: true
+  notify: restart datadog-agent
+
